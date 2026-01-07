@@ -248,9 +248,9 @@ export default function Application(props: {
                     </h1>
                     <br></br>
                     <h1 className="font-bold">
-                      To join KTP for Spring Rush 2025, complete the application
-                      below by 7:00 pm on Monday, April 7th. Contact
-                      help@ktpnu.com or carolineguerra2027@u.northwestern.edu with any questions.
+                      To join KTP for Winter Rush 2026, complete the application
+                      below by 7:00 pm on Monday, January 12th. Contact
+                      help@ktpnu.com or romir@u.northwestern.edu with any questions.
                     </h1>
                   </div>
                 </div>
