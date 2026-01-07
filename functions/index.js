@@ -62,7 +62,7 @@ exports.reserveCCTime = functions.https.onCall(async (data, context) => {
         sheet.getCell(data.i, 4).value +
         ". The timeslot is " +
         sheet.getCell(data.i, 0).value +
-        " on April 8th.",
+        " on January 13th.",
     });
     return true;
   }
@@ -110,13 +110,13 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
     selected_gi_timeslot:
       "Your group interview timeslot is at Tech M345 from " +
       sheet.getCell(data.i, 0).value +
-      " on Thursday, April 10th.",
+      " on Thursday, January 15th.",
   })} else {
   rush_users.child(context.auth.uid).update({
     selected_social_timeslot:
       "Your social night timeslot is at Tech F281 from " +
       sheet.getCell(data.i, 0).value +
-      " on Wednesday, April 9th.",})
+      " on Wednesday, January 14th.",})
   }
   return true;
 });
@@ -148,7 +148,7 @@ exports.getCCTimes = functions.https.onCall(async (data, context) => {
       times.push({
         time: sheet.getCell(i, 0).value,
         location: sheet.getCell(i, 4).value,
-        date: "April 8th",
+        date: "January 13th",
         i: i,
         j: 0,
       });
