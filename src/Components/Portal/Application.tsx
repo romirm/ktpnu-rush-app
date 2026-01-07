@@ -47,11 +47,11 @@ export default function Application(props: {
   }, props.user);
 
   useEffect(() => {
-    if (new Date() > new Date(2025, 3, 7, 22) && !props.readonly) {
+    if (new Date() > new Date(2026, 0, 12, 22) && !props.readonly) {
       Swal.fire({
         icon: "error",
         title: "Applications are closed!",
-        text: "Applications for Spring 2025 are closed.",
+        text: "Applications for Winter 2026 are closed.",
       }).then(() => {
         window.location.href = "https://ktpnu.com";
       });
