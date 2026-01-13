@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import GroupPic from "@images/groupPC-min.jpg";
 import Logo from "@images/Logo.png";
 import { FirebaseContext } from "@framework/FirebaseContext";
@@ -7,15 +7,30 @@ import Swal from "sweetalert2";
 export default function Login() {
   const firebase = useContext(FirebaseContext).firebase;
   const provider = useContext(FirebaseContext).provider;
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user: any) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user: any) => {
       if (user) {
-        window.location.href = "/";
+        // Only redirect once and if we haven't already redirected
+        if (!hasRedirected.current) {
+          hasRedirected.current = true;
+          // Small delay to ensure auth state is stable
+          setTimeout(() => {
+            if (window.location.hash.includes("delibs")) {
+              window.location.href = "/delibs";
+            } else {
+              window.location.href = "/";
+            }
+          }, 100);
+        }
       } else {
         console.log("DEBUG: signed out");
+        hasRedirected.current = false; // Reset if user logs out
       }
     });
+
+    return () => unsubscribe();
   }, []);
 
   return (
