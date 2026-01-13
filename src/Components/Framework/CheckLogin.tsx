@@ -1,9 +1,10 @@
 import { FirebaseContext } from "@framework/FirebaseContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 
 export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
   const firebase = useContext(FirebaseContext).firebase;
   const [loading, setLoading] = useState(true);
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user: any) => {
@@ -11,17 +12,22 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
       if (user) {
         console.log("User is logged in\n");
         props.setUser(user);
+        hasRedirected.current = false; // Reset if user logs in
       } else {
-        if (props.delibs) {
-          window.location.href = "/login#delibs";
-        } else {
-          window.location.href = "/login";
+        // Only redirect once and if we haven't already redirected
+        if (!hasRedirected.current) {
+          hasRedirected.current = true;
+          if (props.delibs) {
+            window.location.href = "/login#delibs";
+          } else {
+            window.location.href = "/login";
+          }
         }
       }
     });
 
     return () => unsubscribe();
-  }, [props.delibs]); // Only include delibs, not the entire props object or firebase
+  }, [props.delibs, props.setUser]);
 
   if (loading) {
     return (
