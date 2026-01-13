@@ -3,16 +3,15 @@ import { useContext, useEffect, useState } from "react";
 
 export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
   const firebase = useContext(FirebaseContext).firebase;
-  const [loading, setLoading] = useState(true); // Track auth initialization
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user: any) => {
-      setLoading(false); // Auth state has been determined
+      setLoading(false);
       if (user) {
-        console.log("User is logged in");
+        console.log("User is logged in\n");
         props.setUser(user);
       } else {
-        // Only redirect when Firebase is initialized
         if (props.delibs) {
           window.location.href = "/login#delibs";
         } else {
@@ -22,9 +21,8 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
     });
 
     return () => unsubscribe();
-  }, [firebase, props]);
+  }, [props.delibs]); // Only include delibs, not the entire props object or firebase
 
-  // Show nothing (or a simple loading screen) while auth is initializing
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
