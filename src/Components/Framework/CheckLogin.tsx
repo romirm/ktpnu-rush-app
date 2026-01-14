@@ -12,9 +12,8 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
       if (user) {
         console.log("User is logged in\n");
         props.setUser(user);
-        hasRedirected.current = false; // Reset if user logs in
+        hasRedirected.current = false;
       } else {
-        // Only redirect once and if we haven't already redirected
         if (!hasRedirected.current) {
           hasRedirected.current = true;
           if (props.delibs) {

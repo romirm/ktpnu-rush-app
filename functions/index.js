@@ -75,6 +75,11 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
   const sheet = doc.sheetsByIndex[0];
   await sheet.loadCells("A2:Z3");
   var numTimeSignups = sheet.getCell(data.i, 1).value;
+  if (numTimeSignups === null || numTimeSignups === undefined || isNaN(numTimeSignups)) {
+    numTimeSignups = 0;
+  } else {
+    numTimeSignups = parseFloat(numTimeSignups);
+  }
   var reserveCol = numTimeSignups + 2;
   console.log(
     "Attempting to reserve row " + data.i + " and column " + reserveCol,
@@ -95,7 +100,7 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
     }
     if (!reserveCol) {
       console.log("Can't reserve time!");
-      sheet.getCell(data.i, 1).value = 23;
+      sheet.getCell(data.i, 1).value = 26;
       await sheet.saveUpdatedCells();
       return false;
     }
@@ -262,7 +267,7 @@ exports.getGITimes = functions.https.onCall(async (data, context) => {
     //j is the col
     if (
       !isNaN(sheet.getCell(i, 1).value) &&
-      parseFloat(sheet.getCell(i, 1).value) < 23
+      parseFloat(sheet.getCell(i, 1).value) < 26
     ) {
       times.push({
         time: sheet.getCell(i, 0).value,
