@@ -75,11 +75,6 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
   const sheet = doc.sheetsByIndex[0];
   await sheet.loadCells("A2:Z3");
   var numTimeSignups = sheet.getCell(data.i, 1).value;
-  if (numTimeSignups === null || numTimeSignups === undefined || isNaN(numTimeSignups)) {
-    numTimeSignups = 0;
-  } else {
-    numTimeSignups = parseFloat(numTimeSignups);
-  }
   var reserveCol = numTimeSignups + 2;
   console.log(
     "Attempting to reserve row " + data.i + " and column " + reserveCol,
