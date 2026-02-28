@@ -40,30 +40,37 @@ export default function PortalContainer(props: { user: any }) {
       get(child(ref(database), "rush_users/" + props.user.uid)).then(
         (snapshot) => {
           const dbEntry = snapshot.val();
-          if(dbEntry?.dropped) {
-            setDropped(true);
-          }
-          setUserDBEntry(dbEntry);
-          if (!dbEntry) {
-            console.log("Error shouldn't happen...");
-            window.location.href = "/login";
-          } else if (!dbEntry.completed_application) {
-            setUserStage(0);
-          } else if (dbEntry.completed_application && !dbEntry.stage) {
-            setUserStage(1);
-            setNav(fullNav);
+          if (dbEntry) {
+            if(dbEntry?.dropped) {
+              setDropped(true);
+            }
+            setUserDBEntry(dbEntry);
+            if (!dbEntry.completed_application) {
+              setUserStage(0);
+            } else if (dbEntry.completed_application && !dbEntry.stage) {
+              setUserStage(1);
+              setNav(fullNav);
+            } else {
+              setUserStage(dbEntry.stage);
+              setNav(fullNav);
+            }
           } else {
-            setUserStage(dbEntry.stage);
-            setNav(fullNav);
+            // User not found in database, create initial entry
+            setUserStage(0);
+            setUserDBEntry({});
           }
         }
-      );
+      ).catch((error) => {
+        console.error("Error fetching user data:", error);
+        setUserStage(0);
+        setUserDBEntry({});
+      });
     }
-  }, [props.user]);
+  }, [props.user, database]);
   return (
     <>
       <div className="min-h-full">
-        {userStage!=5 && <Disclosure as="nav" className="border-b border-gray-200 bg-white">
+        {userStage!=5 && userStage!=-1 && <Disclosure as="nav" className="border-b border-gray-200 bg-white">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -245,7 +252,7 @@ export default function PortalContainer(props: { user: any }) {
                 </div></div>
               )}
               <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                {userStage != -1 && userStage!=5 && <Steps stage={userStage} />}
+                {userStage > 0 && userStage!=5 && <Steps stage={userStage} />}
               </div>
               {userStage === 0 && <Application user={props.user} userEntry={userDBEntry} readonly={false}/>}
               {userStage === 1 && <NetworkingNightContent />}

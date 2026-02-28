@@ -1,104 +1,295 @@
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 
-const steps_default = [
-  { id: "01", name: "Application", href: "#", status: "upcoming" },
-  { id: "02", name: "Networking Night", href: "#", status: "upcoming" },
-  { id: "03", name: "Coffee Chats", href: "#", status: "upcoming" },
-  { id: "04", name: "Social / Group", href: "#", status: "upcoming" },
-  { id: "05", name: "Individual Interviews", href: "#", status: "upcoming" },
+interface Step {
+  id: string;
+  name: string;
+  href: string;
+  status: "upcoming" | "current" | "complete";
+  date: string;
+  time: string;
+}
+
+const steps_default: Step[] = [
+  { 
+    id: "01", 
+    name: "Networking Night", 
+    href: "#", 
+    status: "upcoming",
+    date: "April 6th",
+    time: "7:00 PM"
+  },
+  { 
+    id: "02", 
+    name: "Coffee Chats", 
+    href: "#", 
+    status: "upcoming",
+    date: "April 7th",
+    time: "Various Times"
+  },
+  { 
+    id: "03", 
+    name: "Social Night", 
+    href: "#", 
+    status: "upcoming",
+    date: "April 8th",
+    time: "Times TBD"
+  },
+  { 
+    id: "04", 
+    name: "Group Interviews", 
+    href: "#", 
+    status: "upcoming",
+    date: "April 9th",
+    time: "Times TBD"
+  },
+  { 
+    id: "05", 
+    name: "Individual Interviews", 
+    href: "#", 
+    status: "upcoming",
+    date: "April 10th",
+    time: "Various Times"
+  },
 ];
 
-export default function Steps(props:{stage:number}) {
+export default function Steps(props: { stage: number }) {
   const [steps, setSteps] = useState(steps_default);
+  
   useEffect(() => {
-    var newSteps = [...steps]
-    for(var i = 0; i < newSteps.length; i++) {
-      if(i < props.stage) {
-        newSteps[i].status = "complete";
-      } else if(i === props.stage) {
-        newSteps[i].status = "current";
+    var newSteps = [...steps];
+    // Stage 0 is Application (not shown), so subtract 1 to get step index
+    // Stage 1 = Networking (index 0), Stage 2 = Coffee (index 1)
+    // Stage 3 = Social + Group (indices 2 AND 3 - both highlighted since no cuts between them)
+    // Stage 4 = Individual (index 4)
+    let stepIndex = props.stage - 1;
+    
+    for (var i = 0; i < newSteps.length; i++) {
+      if (props.stage === 3) {
+        // Stage 3 is Social + Group Interviews (both steps 2 and 3)
+        if (i < 2) {
+          newSteps[i].status = "complete";
+        } else if (i === 2 || i === 3) {
+          newSteps[i].status = "current";
+        }
+      } else if (props.stage === 4) {
+        // Stage 4 is Individual Interviews (step 4)
+        if (i < 4) {
+          newSteps[i].status = "complete";
+        } else if (i === 4) {
+          newSteps[i].status = "current";
+        }
       } else {
-        break;
+        // Stages 1-2 map directly
+        if (i < stepIndex) {
+          newSteps[i].status = "complete";
+        } else if (i === stepIndex) {
+          newSteps[i].status = "current";
+        }
       }
     }
     setSteps(newSteps);
-  }, [props.stage])
-  return (
-    <nav aria-label="Progress">
-      <ol
-        role="list"
-        className="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0 bg-white"
-      >
-        {steps.map((step, stepIdx) => (
-          <li key={step.name} className="relative md:flex md:flex-1">
-            {step.status === "complete" ? (
-              <div className="group flex w-full items-center">
-                <span className="flex items-center px-6 py-4 text-sm font-medium">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-indigo-600">
-                    <CheckIcon
-                      className="h-6 w-6 text-white"
-                      aria-hidden="true"
-                    />
-                  </span>
-                  <span className="ml-4 text-sm font-medium text-gray-900">
-                    {step.name}
-                  </span>
-                </span>
-              </div>
-            ) : step.status === "current" ? (
-              <div
-                className="flex items-center px-6 py-4 text-sm font-medium"
-                aria-current="step"
-              >
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-indigo-600">
-                  <span className="text-indigo-600">{step.id}</span>
-                </span>
-                <span className="ml-4 text-sm font-medium text-indigo-600">
-                  {step.name}
-                </span>
-              </div>
-            ) : (
-              <div className="group flex items-center">
-                <span className="flex items-center px-6 py-4 text-sm font-medium">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300">
-                    <span className="text-gray-500">
-                      {step.id}
-                    </span>
-                  </span>
-                  <span className="ml-4 text-sm font-medium text-gray-500">
-                    {step.name}
-                  </span>
-                </span>
-              </div>
-            )}
+  }, [props.stage]);
 
-            {stepIdx !== steps.length - 1 ? (
-              <>
-                {/* Arrow separator for lg screens and up */}
-                <div
-                  className="absolute top-0 right-0 hidden h-full w-5 md:block"
-                  aria-hidden="true"
-                >
-                  <svg
-                    className="h-full w-full text-gray-300"
-                    viewBox="0 0 22 80"
-                    fill="none"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      d="M0 -2L20 40L0 82"
-                      vectorEffect="non-scaling-stroke"
-                      stroke="currentcolor"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+  return (
+    <nav aria-label="Progress" className="w-full">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-4">
+        {steps.map((step, stepIdx) => {
+          // Skip Group Interviews (index 3) as it will be merged with Social Night (index 2)
+          if (stepIdx === 3) return null;
+          
+          // Check if this is the merged Social + Group card
+          const isMergedCard = stepIdx === 2;
+          const groupInterviewStep = isMergedCard ? steps[3] : null;
+          
+          return (
+            <div
+              key={step.name}
+              className={`relative overflow-hidden transition-all duration-300 ${
+                // Social Night + Group Interviews merged card spans 2 columns
+                isMergedCard
+                  ? `lg:col-span-2 rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm hover:shadow-md ${
+                      step.status === "current" ? "ring-2 ring-blue-600 shadow-lg" : ""
+                    }`
+                  : // All other cards - normal styling
+                    `rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm hover:shadow-md ${
+                      step.status === "current" ? "ring-2 ring-blue-600 shadow-lg" : ""
+                    }`
+              }`}
+            >
+              {/* Connector line for desktop */}
+              {stepIdx !== steps.length - 1 && stepIdx !== 3 && (
+                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 transform -translate-y-1/2 z-0">
+                  <div className="h-0.5 w-full bg-gradient-to-r from-slate-300 to-transparent" />
                 </div>
-              </>
-            ) : null}
-          </li>
-        ))}
-      </ol>
+              )}
+
+              {/* Card content */}
+              {isMergedCard ? (
+                // Merged Social Night + Group Interviews content
+                <div className="relative z-10 p-6 sm:p-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-4">
+                    {/* Social Night side */}
+                    <div className="lg:border-r lg:border-slate-200 lg:pr-4">
+                      <div className="flex items-center justify-between mb-4">
+                        {step.status === "complete" ? (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-md">
+                            <CheckIcon className="h-7 w-7 text-white" aria-hidden="true" />
+                          </div>
+                        ) : step.status === "current" ? (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-600 bg-slate-50">
+                            <span className="text-lg font-bold text-blue-600">{step.id}</span>
+                          </div>
+                        ) : (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-300 bg-slate-50">
+                            <span className="text-lg font-semibold text-slate-500">{step.id}</span>
+                          </div>
+                        )}
+                        {step.status === "current" && (
+                          <span className="inline-block px-3 py-1 text-xs font-bold text-blue-600 bg-blue-50 rounded-full uppercase tracking-wide">
+                            Current
+                          </span>
+                        )}
+                      </div>
+                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                        step.status === "current" ? "text-blue-700" : "text-slate-800"
+                      }`}>
+                        {step.name}
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                          </svg>
+                          <p className={`text-sm font-semibold ${
+                            step.status === "current" ? "text-slate-700" : "text-slate-600"
+                          }`}>
+                            {step.date}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className={`text-sm font-medium ${
+                            step.status === "current" ? "text-slate-700" : "text-slate-600"
+                          }`}>
+                            {step.time}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Group Interviews side */}
+                    <div className="lg:pl-4 border-t lg:border-t-0 border-slate-200 pt-6 lg:pt-0">
+                      <div className="flex items-center justify-between mb-4">
+                        {groupInterviewStep.status === "complete" ? (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-md">
+                            <CheckIcon className="h-7 w-7 text-white" aria-hidden="true" />
+                          </div>
+                        ) : groupInterviewStep.status === "current" ? (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-600 bg-slate-50">
+                            <span className="text-lg font-bold text-blue-600">{groupInterviewStep.id}</span>
+                          </div>
+                        ) : (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-300 bg-slate-50">
+                            <span className="text-lg font-semibold text-slate-500">{groupInterviewStep.id}</span>
+                          </div>
+                        )}
+                        {groupInterviewStep.status === "current" && (
+                          <span className="inline-block px-3 py-1 text-xs font-bold text-blue-600 bg-blue-50 rounded-full uppercase tracking-wide">
+                            Current
+                          </span>
+                        )}
+                      </div>
+                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                        groupInterviewStep.status === "current" ? "text-blue-700" : "text-slate-800"
+                      }`}>
+                        {groupInterviewStep.name}
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                          </svg>
+                          <p className={`text-sm font-semibold ${
+                            groupInterviewStep.status === "current" ? "text-slate-700" : "text-slate-600"
+                          }`}>
+                            {groupInterviewStep.date}
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className={`text-sm font-medium ${
+                            groupInterviewStep.status === "current" ? "text-slate-700" : "text-slate-600"
+                          }`}>
+                            {groupInterviewStep.time}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {step.status === "complete" && (
+                    <div className="mt-4 h-1 w-8 rounded-full bg-blue-600" />
+                  )}
+                </div>
+              ) : (
+                // Regular card content
+                <div className="relative z-10 p-6 sm:p-8">
+                  <div className="flex items-center justify-between mb-4">
+                    {step.status === "complete" ? (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-md">
+                        <CheckIcon className="h-7 w-7 text-white" aria-hidden="true" />
+                      </div>
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-300 bg-slate-50">
+                        <span className="text-lg font-semibold text-slate-500">{step.id}</span>
+                      </div>
+                    )}
+                    {step.status === "current" && (
+                      <span className="inline-block px-3 py-1 text-xs font-bold text-blue-600 bg-blue-50 rounded-full uppercase tracking-wide">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                    step.status === "current" ? "text-blue-700" : "text-slate-800 group-hover:text-slate-900"
+                  }`}>
+                    {step.name}
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                      </svg>
+                      <p className={`text-sm font-semibold ${
+                        step.status === "current" ? "text-slate-700" : "text-slate-600"
+                      }`}>
+                        {step.date}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <svg className="h-4 w-4 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className={`text-sm font-medium ${
+                        step.status === "current" ? "text-slate-700" : "text-slate-600"
+                      }`}>
+                        {step.time}
+                      </p>
+                    </div>
+                  </div>
+                  {step.status === "complete" && (
+                    <div className="mt-4 h-1 w-8 rounded-full bg-blue-600" />
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </nav>
   );
 }

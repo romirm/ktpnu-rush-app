@@ -47,11 +47,11 @@ export default function Application(props: {
   }, props.user);
 
   useEffect(() => {
-    if (new Date() > new Date(2026, 3, 8, 0) && !props.readonly) {
+    if (new Date() > new Date(2026, 11, 31, 0) && !props.readonly) {
       Swal.fire({
         icon: "error",
         title: "Applications are closed!",
-        text: "Applications for Spring 2026 are closed.",
+        text: "Applications for Winter 2026 are closed.",
       }).then(() => {
         window.location.href = "https://ktpnu.com";
       });
@@ -127,6 +127,10 @@ export default function Application(props: {
     }
     if (!ps.major) {
       majorRef.current.classList.add("bg-red-100");
+      skip = true;
+    }
+    if (!ps.grade) {
+      gradeRef.current.classList.add("bg-red-100");
       skip = true;
     }
     if (!ps.gpa || isNaN(parseFloat(ps.gpa)) || parseFloat(ps.gpa) > 4.0) {
@@ -230,28 +234,64 @@ export default function Application(props: {
       setFailureNotif(true);
     }
   }
+
+  async function saveResponses() {
+    if (!props.user?.uid) {
+      return;
+    }
+
+    const formData = {
+      fullName: nameRef.current.value,
+      hometown: hometownRef.current.value,
+      gender: genderRef.current.value,
+      grade: gradeRef.current.value,
+      major: majorRef.current.value,
+      gpa: gpaRef.current.value,
+      linkedinURL: linkedinRef.current.value,
+      techInterest: techInterestRef.current.value,
+      whyKTP: whyKTPRef.current.value,
+      scientificBreakthrough: scientificBreakthroughRef.current.value,
+      brandCompany: brandCompanyRef.current.value,
+      passion: passionRef.current.value,
+      funFact: funFactRef.current.value,
+    };
+
+    try {
+      await update(ref(database, "rush_users/" + props.user.uid), formData);
+      Swal.fire({
+        icon: "success",
+        title: "Responses Saved!",
+        text: "Your application responses have been saved. You can come back to finish anytime.",
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error saving responses",
+        text: "Please try again. If this continues, email help@ktpnu.com.",
+      });
+    }
+  }
   return (
     <>
-      <div className="bg-gray-100">
+      <div className="bg-white">
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
           <div className="space-y-6">
             {!props.readonly && (
               <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
                 <div className="md:grid md:grid-cols-3 md:gap-6">
-                  <div className="md:col-span-3 font-semibold text-lg">
-                    <h1>
-                      We are Northwestern's premiere pre-professional
-                      technological fraternity and offer the best opportunities
-                      for students pursuing tech careers. We look forward to
-                      getting to know you and potentially welcoming you to our
-                      organization.{" "}
+                  <div className="md:col-span-3">
+                    <h1 className="text-lg font-bold text-blue-900">
+                      Welcome to KTP's Spring 2026 Rush Application!
                     </h1>
-                    <br></br>
-                    <h1 className="font-bold">
-                      To join KTP for Winter Rush 2026, complete the application
-                      below by 7:00 pm on Monday, January 12th. Contact
-                      help@ktpnu.com or romir@u.northwestern.edu with any questions.
-                    </h1>
+                    <p className="mt-3 text-sm text-gray-700">
+                      We are Northwestern's premiere pre-professional technical fraternity and offer the best opportunities for students pursuing tech careers. We look forward to getting to know you and potentially welcoming you to our organization.
+                    </p>
+                    <p className="mt-4 text-sm font-medium text-blue-700">
+                      Complete the application below to proceed through our rush process. Contact help@ktpnu.com with any questions.
+                    </p>
+                    <p className="mt-3 text-xs text-gray-600"><span className="text-red-600 font-semibold">*</span> indicates required fields</p>
                   </div>
                 </div>
               </div>
@@ -261,7 +301,7 @@ export default function Application(props: {
             <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
               <div className="md:grid md:grid-cols-3 md:gap-6">
                 <div className="md:col-span-1">
-                  <h3 className="text-base font-semibold leading-6 text-gray-900">
+                  <h3 className="text-base font-bold leading-6 text-blue-900">
                     Personal Information
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
@@ -276,7 +316,7 @@ export default function Application(props: {
                         htmlFor="first-name"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Full name
+                        Full name <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -318,7 +358,7 @@ export default function Application(props: {
                         htmlFor="hometown"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Hometown
+                        Hometown <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -350,8 +390,8 @@ export default function Application(props: {
                           removeRedIfApplicable(genderRef);
                         }}
                         className={classNames(
-                          props.readonly ? "bg-gray-100" : "",
-                          "mt-2 block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                          props.readonly ? "bg-gray-100" : "bg-white hover:bg-gray-50",
+                          "mt-2 block w-full rounded-lg border border-gray-300 py-2 px-3 text-gray-900 shadow-sm focus:border-gray-300 focus:ring-0 focus:outline-none sm:text-sm sm:leading-6",
                         )}
                       >
                         <option disabled={props.readonly}>Female</option>
@@ -362,7 +402,7 @@ export default function Application(props: {
                     <div className="col-span-6">
                       <div className="flex items-center space-x-1">
                         <label className="inline-block text-sm font-medium leading-6 text-gray-900">
-                          Photo
+                          Photo <span className="text-red-600">*</span>
                         </label>
                         <QuestionMarkCircleIcon
                           className="cursor-pointer h-3 w-3 text-indigo-700"
@@ -505,7 +545,7 @@ export default function Application(props: {
             <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
               <div className="md:grid md:grid-cols-3 md:gap-6">
                 <div className="md:col-span-1">
-                  <h3 className="text-base font-semibold leading-6 text-gray-900">
+                  <h3 className="text-base font-bold leading-6 text-blue-900">
                     Professional Information
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
@@ -519,7 +559,7 @@ export default function Application(props: {
                         htmlFor="grade"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Grade
+                        Grade <span className="text-red-600">*</span>
                       </label>
                       <select
                         id="grade"
@@ -529,8 +569,8 @@ export default function Application(props: {
                           removeRedIfApplicable(gradeRef);
                         }}
                         className={classNames(
-                          props.readonly ? "bg-gray-100" : "",
-                          "mt-2 block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                          props.readonly ? "bg-gray-100" : "bg-white hover:bg-gray-50",
+                          "mt-2 block w-full rounded-lg border border-gray-300 py-2 px-3 text-gray-900 shadow-sm focus:border-gray-300 focus:ring-0 focus:outline-none sm:text-sm sm:leading-6",
                         )}
                       >
                         <option disabled={props.readonly}>Freshman</option>
@@ -545,7 +585,7 @@ export default function Application(props: {
                         htmlFor="major"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Major
+                        Major <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -567,7 +607,7 @@ export default function Application(props: {
                         htmlFor="gpa"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        GPA
+                        GPA <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -589,7 +629,7 @@ export default function Application(props: {
                         htmlFor="linkedin"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        LinkedIn
+                        LinkedIn <span className="text-red-600">*</span>
                       </label>
                       <div className="mt-2 flex rounded-md shadow-sm">
                         <span
@@ -624,7 +664,7 @@ export default function Application(props: {
                           htmlFor="resume"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Resume
+                          Resume <span className="text-red-600">*</span>
                         </label>
                         <div className="mt-1 flex items-center">
                           <label
@@ -732,7 +772,7 @@ export default function Application(props: {
             <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
               <div className="md:grid md:grid-cols-3 md:gap-6">
                 <div className="md:col-span-1">
-                  <h3 className="text-base font-semibold leading-6 text-gray-900">
+                  <h3 className="text-base font-bold leading-6 text-blue-900">
                     Short Answers
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
@@ -747,7 +787,7 @@ export default function Application(props: {
                       htmlFor="tech-interest"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Briefly describe your tech interest.
+                      Briefly describe your tech interest. <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -772,9 +812,7 @@ export default function Application(props: {
                       htmlFor="scientific-breakthrough"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      What do you believe has been the most influential
-                      scientific/technological breakthrough of the last 100
-                      years and why?
+                      What do you believe has been the most influential scientific/technological breakthrough of the last 100 years and why? <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -799,7 +837,7 @@ export default function Application(props: {
                       htmlFor="company-resonate"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      What is a brand or company you resonate with?
+                      What is a brand or company you resonate with? <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -824,7 +862,7 @@ export default function Application(props: {
                       htmlFor="why-ktp"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Why do you want to join Kappa Theta Pi?
+                      Why do you want to join Kappa Theta Pi? <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -849,9 +887,7 @@ export default function Application(props: {
                       htmlFor="passion-class"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      What is a passion of yours, unrelated to your
-                      major/classes/tech, that you would love to teach a class
-                      about?
+                      What is a passion of yours, unrelated to your major/classes/tech, that you would love to teach a class about? <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -876,7 +912,7 @@ export default function Application(props: {
                       htmlFor="fun-fact"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Tell us a fun fact.
+                      Tell us a fun fact. <span className="text-red-600">*</span>
                     </label>
                     <div className="mt-2">
                       <textarea
@@ -901,10 +937,16 @@ export default function Application(props: {
             </div>
 
             {!props.readonly && (
-              <div className="flex justify-end px-4 sm:px-0">
+              <div className="flex justify-end gap-3 px-4 sm:px-0">
+                <button
+                  onClick={saveResponses}
+                  className="inline-flex justify-center rounded-lg bg-gray-600 py-3 px-6 text-base font-bold text-white shadow-md hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-colors"
+                >
+                  Save Responses
+                </button>
                 <button
                   onClick={completeSubmission}
-                  className="ml-3 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                  className="inline-flex justify-center rounded-lg bg-blue-600 py-3 px-8 text-base font-bold text-white shadow-md hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
                 >
                   Submit Application
                 </button>

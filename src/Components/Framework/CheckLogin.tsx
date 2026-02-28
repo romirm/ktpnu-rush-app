@@ -26,7 +26,7 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
     });
 
     return () => unsubscribe();
-  }, [props.delibs, props.setUser]);
+  }, []);
 
   if (loading) {
     return (
