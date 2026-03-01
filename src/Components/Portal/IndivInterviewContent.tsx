@@ -49,7 +49,7 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
               Congrats! You moved on to{" "}
               <div className="mt-3">
-                <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent text-5xl sm:text-6xl font-extrabold tracking-tight">
+                <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent text-5xl sm:text-6xl font-extrabold tracking-tight whitespace-nowrap">
                   Individual Interviews
                 </span>
               </div>

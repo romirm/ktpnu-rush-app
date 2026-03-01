@@ -23,10 +23,12 @@ export default function NetworkingNightContent() {
           </div>
 
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
-            Join us for{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-              Networking Night
-            </span>
+            Join us for
+            <div className="mt-3">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent text-5xl sm:text-6xl font-extrabold tracking-tight">
+                Networking Night
+              </span>
+            </div>
           </h2>
 
           <div className="mt-8 space-y-6">

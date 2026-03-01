@@ -97,39 +97,27 @@ export default function Steps(props: { stage: number }) {
         {steps.map((step, stepIdx) => {
           // Skip Group Interviews (index 3) as it will be merged with Social Night (index 2)
           if (stepIdx === 3) return null;
-          
+
           // Check if this is the merged Social + Group card
           const isMergedCard = stepIdx === 2;
           const groupInterviewStep = isMergedCard ? steps[3] : null;
-          
+
           return (
             <div
               key={step.name}
               className={`relative overflow-hidden transition-all duration-300 ${
-                // Social Night + Group Interviews merged card spans 2 columns
                 isMergedCard
                   ? `lg:col-span-2 rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm hover:shadow-md ${
                       step.status === "current" ? "ring-2 ring-blue-600 shadow-lg" : ""
                     }`
-                  : // All other cards - normal styling
-                    `rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm hover:shadow-md ${
+                  : `rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm hover:shadow-md ${
                       step.status === "current" ? "ring-2 ring-blue-600 shadow-lg" : ""
                     }`
               }`}
             >
-              {/* Connector line for desktop */}
-              {stepIdx !== steps.length - 1 && stepIdx !== 3 && (
-                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 transform -translate-y-1/2 z-0">
-                  <div className="h-0.5 w-full bg-gradient-to-r from-slate-300 to-transparent" />
-                </div>
-              )}
-
-              {/* Card content */}
               {isMergedCard ? (
-                // Merged Social Night + Group Interviews content
                 <div className="relative z-10 p-6 sm:p-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-4">
-                    {/* Social Night side */}
                     <div className="lg:border-r lg:border-slate-200 lg:pr-4">
                       <div className="flex items-center justify-between mb-4">
                         {step.status === "complete" ? (
@@ -151,7 +139,7 @@ export default function Steps(props: { stage: number }) {
                           </span>
                         )}
                       </div>
-                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight whitespace-nowrap ${
                         step.status === "current" ? "text-blue-700" : "text-slate-800"
                       }`}>
                         {step.name}
@@ -180,7 +168,6 @@ export default function Steps(props: { stage: number }) {
                       </div>
                     </div>
 
-                    {/* Group Interviews side */}
                     <div className="lg:pl-4 border-t lg:border-t-0 border-slate-200 pt-6 lg:pt-0">
                       <div className="flex items-center justify-between mb-4">
                         {groupInterviewStep.status === "complete" ? (
@@ -202,7 +189,7 @@ export default function Steps(props: { stage: number }) {
                           </span>
                         )}
                       </div>
-                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                      <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight whitespace-nowrap ${
                         groupInterviewStep.status === "current" ? "text-blue-700" : "text-slate-800"
                       }`}>
                         {groupInterviewStep.name}
@@ -236,12 +223,15 @@ export default function Steps(props: { stage: number }) {
                   )}
                 </div>
               ) : (
-                // Regular card content
                 <div className="relative z-10 p-6 sm:p-8">
                   <div className="flex items-center justify-between mb-4">
                     {step.status === "complete" ? (
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-md">
                         <CheckIcon className="h-7 w-7 text-white" aria-hidden="true" />
+                      </div>
+                    ) : step.status === "current" ? (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-600 bg-slate-50">
+                        <span className="text-lg font-bold text-blue-600">{step.id}</span>
                       </div>
                     ) : (
                       <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-300 bg-slate-50">
@@ -254,7 +244,7 @@ export default function Steps(props: { stage: number }) {
                       </span>
                     )}
                   </div>
-                  <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight ${
+                  <h3 className={`text-base sm:text-lg font-bold tracking-tight mb-3 transition-colors leading-tight whitespace-nowrap ${
                     step.status === "current" ? "text-blue-700" : "text-slate-800 group-hover:text-slate-900"
                   }`}>
                     {step.name}
