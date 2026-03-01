@@ -61,7 +61,7 @@ export default function Dropped() {
         </div>
 
         <p className="mt-12 text-slate-600">
-          Good luck on your endeavors, and we hope to see you reapply next cycle! 🚀
+          Good luck on your endeavors, and we hope to see you reapply next cycle!
         </p>
       </div>
     </div>
