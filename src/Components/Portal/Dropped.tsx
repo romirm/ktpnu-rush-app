@@ -28,32 +28,11 @@ export default function Dropped() {
         <div className="mt-8 space-y-6 text-left">
           <div className="rounded-2xl bg-white border border-slate-200 px-6 py-6 sm:px-8 sm:py-8 shadow-sm ring-1 ring-slate-100">
             <p className="text-lg leading-8 text-slate-700">
-              Thank you for your interest in KTP and we appreciate your enthusiasm and dedication through the rush process. Unfortunately, we are unable to accept you into the next round at this time.
+              Thank you for your interest in KTP. We appreciate your enthusiasm and dedication through the rush process. Unfortunately, we are unable to accept you into the next round at this time.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-blue-50 border border-blue-200 px-6 py-6 sm:px-8 sm:py-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">What We Learned</h3>
-            <p className="text-base leading-7 text-slate-700 mb-4">
-              We received record amounts of interest in KTP rush this year. Due to the high volume of applicants, we are unable to provide individual feedback for everyone. However, <strong>successful applicants</strong> often demonstrate:
-            </p>
-            <ul className="space-y-3">
-              <li className="flex gap-3">
-                <span className="text-blue-600 font-bold">✓</span>
-                <span className="text-slate-700"><strong>Charisma and Communication:</strong> Being well-spoken and personable</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-blue-600 font-bold">✓</span>
-                <span className="text-slate-700"><strong>Tech Passion:</strong> Excitement about technology and innovation</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-blue-600 font-bold">✓</span>
-                <span className="text-slate-700"><strong>Community Involvement:</strong> Active participation in the Northwestern community</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 px-6 py-6 sm:px-8 sm:py-8">
+          <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 px-6 py-6 sm:px-8 sm:py-8">
             <h3 className="text-xl font-bold text-slate-900 mb-4">Don't Give Up</h3>
             <p className="text-base leading-7 text-slate-700 mb-4">
               We encourage you to work on your "elevator pitch" and reapply during the next rush cycle in the spring! This is not where your story ends—it's just the beginning.
@@ -72,7 +51,7 @@ export default function Dropped() {
             </p>
             <a
               className="inline-block mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              href="https://forms.gle/49EvwqL5qB44Tu7j9"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfmNG3iS2jciW7Hv3NmwdMv8TrKpTt-1fZa2B6LA3OM2VaTLA/viewform?usp=header"
               target="_blank"
               rel="noopener noreferrer"
             >
