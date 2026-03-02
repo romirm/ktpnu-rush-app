@@ -18,7 +18,6 @@ import { FirebaseContext } from "@framework/FirebaseContext";
 
 const navigation = [
   { name: "Deliberations", href: "#", current: true },
-  { name: "Rush Overview", href: "#", current: false },
 ];
 const userNavigation = [{ name: "Sign out", href: "#" }];
 const tabs = [
@@ -219,11 +218,11 @@ export default function DelibPortal(props: { user: any }) {
     <>
       <div className="min-h-full">
         {/* Navbar */}
-        <Disclosure as="nav" className="bg-gray-50">
+        <Disclosure as="nav" className="bg-blue-50">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="relative flex h-16 items-center justify-between border-b border-gray-200">
+                <div className="relative flex h-16 items-center justify-between border-b border-blue-100">
                   <div className="flex items-center relative">
                     <div className="flex relative top-1">
                       <img className="h-8 w-auto" src={Logo} alt="KTP NU" />
@@ -238,9 +237,9 @@ export default function DelibPortal(props: { user: any }) {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? "bg-gray-100"
-                                : "hover:text-gray-700",
-                              "rounded-md px-3 py-2 text-sm font-medium text-gray-900"
+                                ? "bg-blue-100 text-blue-900"
+                                : "hover:text-blue-700",
+                              "rounded-md px-3 py-2 text-sm font-medium text-slate-900"
                             )}
                             aria-current={item.current ? "page" : undefined}
                           >
@@ -257,7 +256,7 @@ export default function DelibPortal(props: { user: any }) {
                       <label htmlFor="search" className="sr-only">
                         Search
                       </label>
-                      <div className="relative text-gray-400 focus-within:text-gray-500">
+                      <div className="relative text-blue-300 focus-within:text-blue-500">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                           <MagnifyingGlassIcon
                             className="h-5 w-5"
@@ -266,7 +265,7 @@ export default function DelibPortal(props: { user: any }) {
                         </div>
                         <input
                           id="search"
-                          className="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-blue-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                           placeholder="Search Rushees"
                           type="search"
                           name="search"
@@ -280,7 +279,7 @@ export default function DelibPortal(props: { user: any }) {
                   </div>
                   <div className="flex lg:hidden">
                     {/* Mobile menu button */}
-                    <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-50 p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-50">
+                    <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-blue-50 p-2 text-blue-400 hover:bg-blue-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-50">
                       <span className="sr-only">Open main menu</span>
                       {open ? (
                         <XMarkIcon
@@ -302,7 +301,7 @@ export default function DelibPortal(props: { user: any }) {
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3 flex-shrink-0">
                         <div>
-                          <Menu.Button className="flex rounded-full bg-gray-50 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-50">
+                          <Menu.Button className="flex rounded-full bg-blue-50 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-blue-50">
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full object-cover"
@@ -335,8 +334,8 @@ export default function DelibPortal(props: { user: any }) {
                                     }
                                     href={item.href}
                                     className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "block py-2 px-4 text-sm text-gray-700"
+                                      active ? "bg-blue-100" : "",
+                                      "block py-2 px-4 text-sm text-slate-700"
                                     )}
                                   >
                                     {item.name}
@@ -352,7 +351,7 @@ export default function DelibPortal(props: { user: any }) {
                 </div>
               </div>
 
-              <Disclosure.Panel className="border-b border-gray-200 bg-gray-50 lg:hidden">
+              <Disclosure.Panel className="border-b border-blue-100 bg-blue-50 lg:hidden">
                 <div className="space-y-1 px-2 pt-2 pb-3">
                   {navigation.map((item) => (
                     <Disclosure.Button
@@ -360,8 +359,10 @@ export default function DelibPortal(props: { user: any }) {
                       as="a"
                       href={item.href}
                       className={classNames(
-                        item.current ? "bg-gray-100" : "hover:bg-gray-100",
-                        "block rounded-md px-3 py-2 font-medium text-gray-900"
+                        item.current
+                          ? "bg-blue-100"
+                          : "hover:bg-blue-100",
+                        "block rounded-md px-3 py-2 font-medium text-slate-900"
                       )}
                       aria-current={item.current ? "page" : undefined}
                     >
@@ -369,7 +370,7 @@ export default function DelibPortal(props: { user: any }) {
                     </Disclosure.Button>
                   ))}
                 </div>
-                <div className="border-t border-gray-200 pt-4 pb-3">
+                <div className="border-t border-blue-100 pt-4 pb-3">
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (
                       <Disclosure.Button
@@ -382,7 +383,7 @@ export default function DelibPortal(props: { user: any }) {
                             .signOut()
                             .then(() => (window.location.href = "/"))
                         }
-                        className="block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-100"
+                        className="block rounded-md py-2 px-3 text-base font-medium text-slate-900 hover:bg-blue-100"
                       >
                         {item.name}
                       </Disclosure.Button>
@@ -395,10 +396,10 @@ export default function DelibPortal(props: { user: any }) {
         </Disclosure>
 
         {/* Page heading */}
-        <header className="bg-gray-50 py-8">
+        <header className="bg-blue-50 py-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <div className="min-w-0 flex-1">
-              <h1 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+              <h1 className="mt-2 text-2xl font-bold leading-7 text-blue-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 Deliberations
               </h1>
             </div>
@@ -451,7 +452,7 @@ export default function DelibPortal(props: { user: any }) {
                       });
                     }
                   }}
-                  className="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="inline-flex items-center gap-x-2 rounded-md bg-blue-700 py-2.5 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
                 >
                   <PaperAirplaneIcon
                     className="-ml-0.5 h-5 w-5"
@@ -488,7 +489,7 @@ export default function DelibPortal(props: { user: any }) {
                 <select
                   id="tabs"
                   name="tabs"
-                  className="mt-4 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-purple-500"
+                  className="mt-4 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500"
                   defaultValue={tabs.find((tab) => tab.current).name}
                   onChange={handleGroupChange}
                 >
@@ -510,7 +511,7 @@ export default function DelibPortal(props: { user: any }) {
                       }}
                       className={classNames(
                         currNav === "All Applicants"
-                          ? "border-purple-500 text-purple-600"
+                          ? "border-blue-500 text-blue-700"
                           : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
                         "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                       )}
@@ -522,7 +523,7 @@ export default function DelibPortal(props: { user: any }) {
                         <span
                           className={classNames(
                             currNav === "All Applicants"
-                              ? "bg-purple-100 text-purple-600"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-gray-100 text-gray-900",
                             "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                           )}
@@ -540,7 +541,7 @@ export default function DelibPortal(props: { user: any }) {
                       }}
                       className={classNames(
                         currNav === "Under Consideration"
-                          ? "border-purple-500 text-purple-600"
+                          ? "border-blue-500 text-blue-700"
                           : "border-transparent text-green-500 hover:border-gray-200 hover:text-green-700",
                         "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                       )}
@@ -550,7 +551,7 @@ export default function DelibPortal(props: { user: any }) {
                         <span
                           className={classNames(
                             currNav === "Under Consideration"
-                              ? "bg-purple-100 text-purple-600"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-gray-100 text-gray-900",
                             "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                           )}
@@ -566,7 +567,7 @@ export default function DelibPortal(props: { user: any }) {
                       }}
                       className={classNames(
                         currNav === "Flagged for Review"
-                          ? "border-purple-500 text-purple-600"
+                          ? "border-blue-500 text-blue-700"
                           : "border-transparent text-yellow-500 hover:border-gray-200 hover:text-yellow-700",
                         "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                       )}
@@ -576,7 +577,7 @@ export default function DelibPortal(props: { user: any }) {
                         <span
                           className={classNames(
                             currNav === "Flagged for Review"
-                              ? "bg-purple-100 text-purple-600"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-gray-100 text-gray-900",
                             "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                           )}
@@ -592,7 +593,7 @@ export default function DelibPortal(props: { user: any }) {
                       }}
                       className={classNames(
                         currNav === "Dropped"
-                          ? "border-purple-500 text-purple-600"
+                          ? "border-blue-500 text-blue-700"
                           : "border-transparent text-red-500 hover:border-gray-200 hover:text-red-700",
                         "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                       )}
@@ -602,7 +603,7 @@ export default function DelibPortal(props: { user: any }) {
                         <span
                           className={classNames(
                             currNav === "Dropped"
-                              ? "bg-purple-100 text-purple-600"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-gray-100 text-gray-900",
                             "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                           )}
@@ -649,7 +650,7 @@ export default function DelibPortal(props: { user: any }) {
                           </div>
                           <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                             <div>
-                              <p className="truncate text-sm font-medium text-purple-600">
+                              <p className="truncate text-sm font-medium text-blue-700">
                                 {candidate.fullName}
                               </p>
                               <p className="mt-2 flex items-center text-sm text-gray-500">
@@ -712,7 +713,7 @@ export default function DelibPortal(props: { user: any }) {
                             }}
                             className={classNames(
                               currNav === "All Applicants" ? "invisible" : "",
-                              "mr-2 inline-flex items-center gap-x-1.5 rounded-md bg-green-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                              "mr-2 inline-flex items-center gap-x-1.5 rounded-md bg-green-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                             )}
                           >
                             <CheckCircleIcon
@@ -733,7 +734,7 @@ export default function DelibPortal(props: { user: any }) {
                             }}
                             className={classNames(
                               currNav === "All Applicants" ? "invisible" : "",
-                              "mx-2 inline-flex items-center gap-x-1.5 rounded-md bg-yellow-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                              "mx-2 inline-flex items-center gap-x-1.5 rounded-md bg-yellow-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                             )}
                           >
                             <ExclamationTriangleIcon
@@ -754,7 +755,7 @@ export default function DelibPortal(props: { user: any }) {
                             }}
                             className={classNames(
                               currNav === "All Applicants" ? "invisible" : "",
-                              "ml-2 inline-flex items-center gap-x-1.5 rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                              "ml-2 inline-flex items-center gap-x-1.5 rounded-md bg-red-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                             )}
                           >
                             <NoSymbolIcon
