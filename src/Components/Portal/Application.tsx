@@ -51,7 +51,7 @@ export default function Application(props: {
       Swal.fire({
         icon: "error",
         title: "Applications are closed!",
-        text: "Applications for Winter 2026 are closed.",
+        text: "Applications for Spring 2026 are closed.",
       }).then(() => {
         window.location.href = "https://ktpnu.com";
       });
