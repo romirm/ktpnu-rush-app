@@ -138,10 +138,10 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
 
             {props.userDBEntry?.selected_indiv_timeslot && (
               <div className="mt-8 space-y-6">
-                <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 px-6 py-6 sm:px-8 sm:py-8">
+                <div className="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 px-6 py-6 sm:px-8 sm:py-8">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <CheckCircleIcon className="h-6 w-6 text-blue-600" />
-                    <p className="text-lg font-bold text-blue-900">Time Slot Confirmed</p>
+                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                    <p className="text-lg font-bold text-green-900">Time Slot Confirmed</p>
                   </div>
                   <p className="text-2xl font-bold text-slate-900 my-2">
                     {props.userDBEntry.selected_indiv_timeslot}
@@ -149,7 +149,7 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
                 </div>
 
                 <div className="rounded-xl bg-blue-50 border border-blue-200 px-6 py-4">
-                  <p className="text-sm font-semibold text-blue-700 uppercase mb-2">Final Reminders</p>
+                  <p className="text-sm font-semibold text-blue-700 uppercase mb-2">Important</p>
                   <ul className="text-base leading-7 text-slate-700 space-y-2 text-left">
                     <li>✓ Arrive 5 minutes early</li>
                     <li>✓ Bring a copy of your resume</li>
