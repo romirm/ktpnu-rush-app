@@ -70,7 +70,7 @@ export default function PortalContainer(props: { user: any }) {
   return (
     <>
       <div className="min-h-full">
-        {userStage!=5 && userStage!=-1 && <Disclosure as="nav" className="border-b border-gray-200 bg-white">
+        {userStage !== 5 && userStage !== -1 && <Disclosure as="nav" className="border-b border-gray-200 bg-white">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -246,20 +246,20 @@ export default function PortalContainer(props: { user: any }) {
           </header>
           {!dropped && activeNav==="rush" && (
             <main>
-              {userStage == -1 && (
+              {userStage === -1 && (
                 <div className="flex justify-center"><div className="sm:px-6 lg:px-8 h-screen">
                   <h1 className="text-2xl font-bold">Loading...</h1>
                 </div></div>
               )}
               <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                {userStage > 0 && userStage!=5 && <Steps stage={userStage} />}
+                {userStage > 0 && userStage !== 5 && <Steps stage={userStage} />}
               </div>
               {userStage === 0 && <Application user={props.user} userEntry={userDBEntry} readonly={false}/>}
               {userStage === 1 && <NetworkingNightContent />}
               {userStage === 2 && <CoffeeChatContent userDBEntry={userDBEntry}/>}
               {userStage === 3 && <GroupInterviewContent userDBEntry={userDBEntry}/>}
               {userStage === 4 && <IndivInterviewContent userDBEntry={userDBEntry} />}
-              {userStage == 5 && <Congrats/>}
+              {userStage === 5 && <Congrats/>}
             </main>
           )}
           {!dropped && activeNav==="application" && (

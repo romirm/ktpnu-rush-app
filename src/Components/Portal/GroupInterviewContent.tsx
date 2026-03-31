@@ -15,26 +15,49 @@ export default function GroupInterviewContent(
     { time: string; i: number; j: number; location: string }[],
     any,
   ] = useState([]);
+  const [isLoadingGroupTimes, setIsLoadingGroupTimes] = useState(false);
+  const [isLoadingSocialTimes, setIsLoadingSocialTimes] = useState(false);
 
   useEffect(() => {
     if (!props.userDBEntry) return;
     if (!props.userDBEntry.selected_gi_timeslot) {
+      setIsLoadingGroupTimes(true);
       firebase
         .functions()
         .httpsCallable("getGITimes")({ type: "group" })
         .then((res: any) => {
           setGroupTimes(res.data);
+          setIsLoadingGroupTimes(false);
+        })
+        .catch(() => {
+          setGroupTimes([]);
+          setIsLoadingGroupTimes(false);
         });
     }
     if (!props.userDBEntry.selected_social_timeslot) {
+      setIsLoadingSocialTimes(true);
       firebase
         .functions()
         .httpsCallable("getGITimes")({ type: "social" })
         .then((res: any) => {
           setSocialTimes(res.data);
+          setIsLoadingSocialTimes(false);
+        })
+        .catch(() => {
+          setSocialTimes([]);
+          setIsLoadingSocialTimes(false);
         });
     }
-  }, [props.userDBEntry]);
+  }, [firebase, props.userDBEntry]);
+
+  const needsGroupSelection = !props.userDBEntry?.selected_gi_timeslot;
+  const needsSocialSelection = !props.userDBEntry?.selected_social_timeslot;
+  const isLoadingNeededTimes =
+    (needsGroupSelection && isLoadingGroupTimes) ||
+    (needsSocialSelection && isLoadingSocialTimes);
+  const noTimesAvailableForNeededSelection =
+    (needsGroupSelection && groupTimes.length === 0 && !isLoadingGroupTimes) ||
+    (needsSocialSelection && socialTimes.length === 0 && !isLoadingSocialTimes);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -107,14 +130,27 @@ export default function GroupInterviewContent(
 
             {(!props.userDBEntry?.selected_gi_timeslot ||
               !props.userDBEntry?.selected_social_timeslot) &&
-              (Object.keys(groupTimes).length == 0 ||
-                Object.keys(socialTimes).length == 0) && (
+              isLoadingNeededTimes && (
                 <div className="mt-8 flex items-center justify-center gap-3">
                   <div className="animate-spin">
                     <ClockIcon className="h-6 w-6 text-blue-600" />
                   </div>
                   <p className="text-lg font-medium text-blue-700">
                     Loading available timeslots...
+                  </p>
+                </div>
+              )}
+
+            {(!props.userDBEntry?.selected_gi_timeslot ||
+              !props.userDBEntry?.selected_social_timeslot) &&
+              !isLoadingNeededTimes &&
+              noTimesAvailableForNeededSelection && (
+                <div className="mt-8 rounded-xl bg-amber-50 border border-amber-200 px-6 py-4">
+                  <p className="text-base font-semibold text-amber-800">
+                    No available timeslots right now for one or more required events.
+                  </p>
+                  <p className="mt-1 text-sm text-amber-700">
+                    Please check back soon or contact help@ktpnu.com.
                   </p>
                 </div>
               )}
@@ -170,7 +206,7 @@ export default function GroupInterviewContent(
       <div className="py-6 px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {Object.keys(socialTimes).length > 0 &&
+            {socialTimes.length > 0 &&
               !props.userDBEntry?.selected_social_timeslot && (
                 <TimeSelections
                   times={socialTimes}
@@ -179,7 +215,7 @@ export default function GroupInterviewContent(
                   name={"Social Interviews"}
                 />
               )}
-            {Object.keys(groupTimes).length > 0 &&
+            {groupTimes.length > 0 &&
               !props.userDBEntry?.selected_gi_timeslot && (
                 <TimeSelections
                   times={groupTimes}

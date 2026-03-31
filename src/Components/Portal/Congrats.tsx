@@ -31,11 +31,11 @@ export default function Congrats() {
             setTimeout(() => {
               Swal.fire({
                 title: "Bid Decision",
-                html: "On behalf of KTP Exec, it is with great pleasure to extend our warmest congratulations to you for being offered a bid to join Kappa Theta Pi. We were impressed by your commitment, enthusiasm, and values during the rush process, and we are thrilled to have you join our organization.\
-<br><br> \
-                As a member of Kappa Theta Pi, you will have the opportunity to grow as a person and a leader, build lifelong friendships, and make a positive impact on the community. We believe that you will make an excellent addition to our organization and we look forward to seeing you thrive as a KTP member.\
-                <br><br>\
-                Once again, congratulations on your bid acceptance, and we cannot wait to officially welcome you into our organization!",
+                html: `On behalf of KTP Exec, it is with great pleasure to extend our warmest congratulations to you for being offered a bid to join Kappa Theta Pi. We were impressed by your commitment, enthusiasm, and values during the rush process, and we are thrilled to have you join our organization.
+<br><br>
+As a member of Kappa Theta Pi, you will have the opportunity to grow as a person and a leader, build lifelong friendships, and make a positive impact on the community. We believe that you will make an excellent addition to our organization and we look forward to seeing you thrive as a KTP member.
+<br><br>
+Once again, congratulations on your bid acceptance, and we cannot wait to officially welcome you into our organization!`,
                 confirmButtonText: "I'm ready, I accept the bid!",
                 cancelButtonText: "No, I need time",
                 showCancelButton: true,

@@ -44,7 +44,7 @@ export default function Application(props: {
     if (props.user) {
       emailRef.current.value = props.user.email;
     }
-  }, props.user);
+  }, [props.user]);
 
   useEffect(() => {
     if (new Date() > new Date(2026, 11, 31, 0) && !props.readonly) {
@@ -56,7 +56,7 @@ export default function Application(props: {
         window.location.href = "https://ktpnu.com";
       });
     }
-  }, []);
+  }, [props.readonly]);
 
   useEffect(() => {
     if (props.userEntry.fullName) {
@@ -117,6 +117,14 @@ export default function Application(props: {
     ps.brandCompany = brandCompanyRef.current.value;
     ps.passion = passionRef.current.value;
     ps.funFact = funFactRef.current.value;
+    if (!emailRef.current.value) {
+      emailRef.current.classList.add("bg-red-100");
+      skip = true;
+      Swal.fire({
+        icon: "error",
+        text: "An email address is required to submit your application.",
+      });
+    }
     if (!ps.fullName) {
       nameRef.current.classList.add("bg-red-100");
       skip = true;
@@ -339,7 +347,7 @@ export default function Application(props: {
                         htmlFor="email-address"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Email address
+                        Email address <span className="text-red-600">*</span>
                       </label>
                       <input
                         readOnly={true}
@@ -422,6 +430,7 @@ export default function Application(props: {
                             className="h-full w-full text-gray-300 object-cover"
                             id="profPicImg"
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1ceyneFkZchgkrwN7dZxWNl_C5Dctvc5BzNh_rEzPQ&s"
+                            alt="Profile preview"
                             ref={pfpImgRef}
                           />
                         </span>

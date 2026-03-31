@@ -8,6 +8,32 @@ export default function TimeSelections(props: {
   name: string;
 }) {
   const firebase = useContext(FirebaseContext).firebase;
+
+  function handleReservationResult(res: any) {
+    if (res.data) {
+      window.location.reload();
+    } else {
+      Swal.fire({
+        icon: "error",
+        text:
+          "This time slot is no longer available. Please refresh the page and try again.",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+  }
+
+  function handleReservationError(err: any) {
+    const errorMessage =
+      err?.message ||
+      "We could not reserve your timeslot. Please try again. If this continues, contact help@ktpnu.com.";
+    Swal.fire({
+      icon: "error",
+      title: "Unable to reserve timeslot",
+      text: errorMessage,
+    });
+  }
+
   return (
     <div className="flex justify-center">
       <div className="px-4 sm:px-6 lg:px-8">
@@ -71,6 +97,15 @@ export default function TimeSelections(props: {
                                 input: "text",
                                 showCancelButton: true,
                               };
+                              const indivOptions: any = {
+                                icon: "info",
+                                title:
+                                  "Are you sure you want to select this time slot?",
+                                text:
+                                  "You will not be able to change this time slot after you select it. Enter your phone number to confirm your selection.",
+                                input: "text",
+                                showCancelButton: true,
+                              };
                               const groupOptions: any = {
                                 icon: "info",
                                 title:
@@ -79,12 +114,27 @@ export default function TimeSelections(props: {
                                   "You will not be able to change this time slot after you select it.",
                                 showCancelButton: true,
                               };
+                              const needsPhone =
+                                props.selectMethod === "coffee_chats" ||
+                                props.selectMethod === "indiv_interviews";
                               Swal.fire(
                                 props.selectMethod === "coffee_chats"
                                   ? coffeeOptions
+                                  : props.selectMethod === "indiv_interviews"
+                                  ? indivOptions
                                   : groupOptions
                               ).then((res) => {
                                 if (res.isConfirmed) {
+                                  if (
+                                    needsPhone &&
+                                    (!res.value || res.value.trim().length === 0)
+                                  ) {
+                                    Swal.fire({
+                                      icon: "error",
+                                      text: "Please enter a phone number to continue.",
+                                    });
+                                    return;
+                                  }
                                   Swal.fire({
                                     icon: "info",
                                     text:
@@ -95,10 +145,6 @@ export default function TimeSelections(props: {
                                   });
                                   Swal.showLoading();
                                   if (props.selectMethod === "coffee_chats") {
-                                    if (res.value.length == 0) {
-                                      Swal.close();
-                                      return;
-                                    }
                                     firebase
                                       .functions()
                                       .httpsCallable("reserveCCTime")({
@@ -106,19 +152,8 @@ export default function TimeSelections(props: {
                                         name: props.userDBEntry.fullName,
                                         phone: res.value,
                                       })
-                                      .then((res: any) => {
-                                        if (res.data) {
-                                          window.location.reload();
-                                        } else {
-                                          Swal.fire({
-                                            icon: "error",
-                                            text:
-                                              "This time slot is no longer available. Please refresh the page and try again.",
-                                          }).then(() => {
-                                            window.location.reload();
-                                          });
-                                        }
-                                      });
+                                      .then(handleReservationResult)
+                                      .catch(handleReservationError);
                                   } else if (
                                     props.selectMethod === "group_interviews"
                                   ) {
@@ -129,19 +164,8 @@ export default function TimeSelections(props: {
                                         name: props.userDBEntry.fullName,
                                           type:"group"
                                       })
-                                      .then((res: any) => {
-                                        if (res.data) {
-                                          window.location.reload();
-                                        } else {
-                                          Swal.fire({
-                                            icon: "error",
-                                            text:
-                                              "This time slot is no longer available. Please refresh the page and try again.",
-                                          }).then(() => {
-                                            window.location.reload();
-                                          });
-                                        }
-                                      });
+                                      .then(handleReservationResult)
+                                      .catch(handleReservationError);
                                   } else if (
                                     props.selectMethod === "social_interviews"
                                   ) {
@@ -152,24 +176,9 @@ export default function TimeSelections(props: {
                                         name: props.userDBEntry.fullName,
                                           type:"social"
                                       })
-                                      .then((res: any) => {
-                                        if (res.data) {
-                                          window.location.reload();
-                                        } else {
-                                          Swal.fire({
-                                            icon: "error",
-                                            text:
-                                              "This time slot is no longer available. Please refresh the page and try again.",
-                                          }).then(() => {
-                                            window.location.reload();
-                                          });
-                                        }
-                                      });
+                                      .then(handleReservationResult)
+                                      .catch(handleReservationError);
                                   } else {
-                                    if (res.value.length == 0) {
-                                      Swal.close();
-                                      return;
-                                    }
                                     firebase
                                       .functions()
                                       .httpsCallable("reserveIndivTime")({
@@ -178,19 +187,8 @@ export default function TimeSelections(props: {
                                         name: props.userDBEntry.fullName,
                                         phone: res.value,
                                       })
-                                      .then((res: any) => {
-                                        if (res.data) {
-                                          window.location.reload();
-                                        } else {
-                                          Swal.fire({
-                                            icon: "error",
-                                            text:
-                                              "This time slot is no longer available. Please refresh the page and try again.",
-                                          }).then(() => {
-                                            window.location.reload();
-                                          });
-                                        }
-                                      });
+                                      .then(handleReservationResult)
+                                      .catch(handleReservationError);
                                   }
                                 }
                               });

@@ -1,10 +1,18 @@
 const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
+const creds = require("./creds.json");
 
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  databaseURL: "https://rush-ktp-default-rtdb.firebaseio.com/",
-});
+const isCloudRuntime = !!process.env.K_SERVICE;
+admin.initializeApp(
+  isCloudRuntime
+    ? {
+      databaseURL: "https://rush-ktp-default-rtdb.firebaseio.com/",
+    }
+    : {
+      credential: admin.credential.cert(creds),
+      databaseURL: "https://rush-ktp-default-rtdb.firebaseio.com/",
+    },
+);
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 //these are not keys, they are IDs
 const cc_signup_doc = new GoogleSpreadsheet(
@@ -19,8 +27,6 @@ const gi_signup_doc = new GoogleSpreadsheet(
 const indiv_signup_doc = new GoogleSpreadsheet(
   functions.config().gdoc_ids.indiv,
 );
-
-const creds = require("./creds.json");
 const nodemailer = require("nodemailer");
 const { group } = require("console");
 
@@ -34,37 +40,59 @@ let transporter = nodemailer.createTransport({
 });
 
 exports.reserveCCTime = functions.https.onCall(async (data, context) => {
-  await cc_signup_doc.useServiceAccountAuth(creds);
-  await cc_signup_doc.loadInfo();
-  const sheet = cc_signup_doc.sheetsByIndex[0];
-  await sheet.loadCells("A6:I25");
-  const reserve_row = data.i;
-  var reserve_col = 5;
-  while (reserve_col < 8) {
-    if (!sheet.getCell(reserve_row, reserve_col).value) {
-      break;
-    }
-    reserve_col++;
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "Authentication is required to reserve a coffee chat timeslot.",
+    );
   }
-  if (reserve_col == 8) {
-    console.log("No spots!");
-    return false;
-  } else {
-    sheet.getCell(reserve_row, reserve_col).value = data.name + " (" +
-      data.phone + ")";
-    await sheet.saveUpdatedCells();
-    rush_users.child(context.auth.uid).update({
-      selected_cc_timeslot: "Your first meeting is with " +
-        sheet.getCell(data.i, 2).value + (sheet.getCell(data.i, 3).value
-          ? (" and " + sheet.getCell(data.i, 3).value)
-          : "") +
-        " at " +
-        sheet.getCell(data.i, 4).value +
-        ". The timeslot is " +
-        sheet.getCell(data.i, 0).value +
-        " on January 13th.",
-    });
-    return true;
+
+  try {
+    await cc_signup_doc.useServiceAccountAuth(creds);
+    await cc_signup_doc.loadInfo();
+    const sheet = cc_signup_doc.sheetsByIndex[0];
+    await sheet.loadCells("A6:I25");
+    const reserve_row = data.i;
+    var reserve_col = 5;
+    while (reserve_col < 8) {
+      if (!sheet.getCell(reserve_row, reserve_col).value) {
+        break;
+      }
+      reserve_col++;
+    }
+    if (reserve_col == 8) {
+      console.log("No spots!");
+      return false;
+    } else {
+      const interviewer1 = sheet.getCell(data.i, 2).value;
+      const interviewer2 = sheet.getCell(data.i, 3).value;
+      const interviewerNames = [interviewer1, interviewer2]
+        .filter((name) => !!name)
+        .join(" and ");
+      const interviewerText = interviewerNames
+        ? (" with " + interviewerNames)
+        : "";
+
+      sheet.getCell(reserve_row, reserve_col).value = data.name + " (" +
+        data.phone + ")";
+      await sheet.saveUpdatedCells();
+      rush_users.child(context.auth.uid).update({
+        selected_cc_timeslot: "Your first meeting is" +
+          interviewerText +
+          " at " +
+          sheet.getCell(data.i, 4).value +
+          ". The timeslot is " +
+          sheet.getCell(data.i, 0).value +
+          " on January 13th.",
+      });
+      return true;
+    }
+  } catch (e) {
+    console.log("reserveCCTime failed:", e && e.message ? e.message : e);
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Google Sheets rejected the signup write. Ensure the service account has Editor access and that signup columns are not protected.",
+    );
   }
 });
 
@@ -74,7 +102,10 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
   await sheet.loadCells("A2:Z3");
-  var numTimeSignups = sheet.getCell(data.i, 1).value;
+  var numTimeSignups = parseInt(sheet.getCell(data.i, 1).value, 10);
+  if (isNaN(numTimeSignups) || numTimeSignups < 0) {
+    numTimeSignups = 0;
+  }
   var reserveCol = numTimeSignups + 2;
   console.log(
     "Attempting to reserve row " + data.i + " and column " + reserveCol,
@@ -122,39 +153,56 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
 });
 
 exports.getCCTimes = functions.https.onCall(async (data, context) => {
-  times = [];
-  console.log("running\n");
-  await cc_signup_doc.useServiceAccountAuth(creds);
-  await cc_signup_doc.loadInfo();
-  const sheet = cc_signup_doc.sheetsByIndex[0];
-  await sheet.loadCells("A6:H25");
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "Authentication is required to fetch coffee chat times.",
+    );
+  }
 
-  for (var i = 5; i < 25; i += 1) {
-    //i is the row
-    const interviewer1 = sheet.getCell(i, 2).value;
-    const interviewer2 = sheet.getCell(i, 3).value;
-    if (interviewer1 || interviewer2) {
+  const times = [];
+  try {
+    await cc_signup_doc.useServiceAccountAuth(creds);
+    await cc_signup_doc.loadInfo();
+    const sheet = cc_signup_doc.sheetsByIndex[0];
+    await sheet.loadCells("A6:H25");
+
+    for (var i = 5; i < 25; i += 1) {
+      const timeValue = sheet.getCell(i, 0).value;
+      const locationValue = sheet.getCell(i, 4).value;
+
+      // A valid coffee chat slot needs a time and location; interviewer names are optional.
+      if (!timeValue || !locationValue) {
+        continue;
+      }
+
       var has_spot = false;
       for (var j = 5; j < 8; j++) {
         if (!sheet.getCell(i, j).value) {
-          console.log("hasspot\n");
           has_spot = true;
+          break;
         }
       }
       if (!has_spot) {
-        console.log("nospot\n");
         continue;
       }
+
       times.push({
-        time: sheet.getCell(i, 0).value,
-        location: sheet.getCell(i, 4).value,
+        time: timeValue,
+        location: locationValue,
         date: "January 13th",
         i: i,
         j: 0,
       });
     }
+    return times;
+  } catch (e) {
+    console.log("getCCTimes failed:", e && e.message ? e.message : e);
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Unable to read coffee chat times from Google Sheets. Check that the configured sheet is shared with the service account.",
+    );
   }
-  return times;
 });
 
 exports.reserveIndivTime = functions.https.onCall(async (data, context) => {
@@ -260,9 +308,11 @@ exports.getGITimes = functions.https.onCall(async (data, context) => {
   for (var i = 1; i < 3; i += 1) {
     //i is the row
     //j is the col
+    const signupCount = parseInt(sheet.getCell(i, 1).value, 10);
+    const normalizedSignupCount = isNaN(signupCount) || signupCount < 0 ? 0 : signupCount;
     if (
-      !isNaN(sheet.getCell(i, 1).value) &&
-      parseFloat(sheet.getCell(i, 1).value) < 26
+      sheet.getCell(i, 0).value &&
+      normalizedSignupCount < 26
     ) {
       times.push({
         time: sheet.getCell(i, 0).value,

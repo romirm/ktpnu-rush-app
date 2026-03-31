@@ -57,7 +57,7 @@ export default function Steps(props: { stage: number }) {
   const [steps, setSteps] = useState(steps_default);
   
   useEffect(() => {
-    var newSteps = [...steps];
+    var newSteps = steps_default.map((step) => ({ ...step }));
     // Stage 0 is Application (not shown), so subtract 1 to get step index
     // Stage 1 = Networking (index 0), Stage 2 = Coffee (index 1)
     // Stage 3 = Social + Group (indices 2 AND 3 - both highlighted since no cuts between them)

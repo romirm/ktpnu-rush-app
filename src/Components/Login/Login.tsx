@@ -31,7 +31,7 @@ export default function Login() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [firebase]);
 
   return (
     <div className="flex min-h-full">

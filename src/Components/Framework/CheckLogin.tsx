@@ -3,6 +3,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 
 export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
   const firebase = useContext(FirebaseContext).firebase;
+  const { setUser, delibs } = props;
   const [loading, setLoading] = useState(true);
   const hasRedirected = useRef(false);
 
@@ -11,12 +12,12 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
       setLoading(false);
       if (user) {
         console.log("User is logged in\n");
-        props.setUser(user);
+        setUser(user);
         hasRedirected.current = false;
       } else {
         if (!hasRedirected.current) {
           hasRedirected.current = true;
-          if (props.delibs) {
+          if (delibs) {
             window.location.href = "/login#delibs";
           } else {
             window.location.href = "/login";
@@ -26,7 +27,7 @@ export default function CheckLogin(props: { setUser: any; delibs: boolean }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [delibs, firebase, setUser]);
 
   if (loading) {
     return (

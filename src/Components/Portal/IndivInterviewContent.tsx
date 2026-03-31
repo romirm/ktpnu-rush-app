@@ -7,20 +7,32 @@ import Swal from 'sweetalert2';
 export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
   const firebase = useContext(FirebaseContext).firebase;
   const [times, setTimes]: [{time:string, i:number,j:number,location:string}[], any] = useState([]);
+  const [isLoadingTimes, setIsLoadingTimes] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   
   useEffect(() => {
     if(!props.userDBEntry) return;
-    if(props.userDBEntry.selected_indiv_timeslot) return;
+    if(props.userDBEntry.selected_indiv_timeslot) {
+      setIsLoadingTimes(false);
+      return;
+    }
+    setLoadFailed(false);
+    setIsLoadingTimes(true);
     firebase
       .functions()
       .httpsCallable("getIndivTimes")({cs: props.userDBEntry.cs})
       .then((res: any) => {
         setTimes(res.data);
-        if(res.data.length==0) {
+        setIsLoadingTimes(false);
+        if(res.data.length === 0) {
           Swal.fire({icon:'error',title:'No more available timeslots',text:'Please contact Romir (786-637-3059) to let him know. Thank you!'})
         }
+      })
+      .catch(() => {
+        setLoadFailed(true);
+        setIsLoadingTimes(false);
       });
-  }, [props.userDBEntry]);
+  }, [firebase, props.userDBEntry]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -88,8 +100,7 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
               </div>
             )}
 
-            {!props.userDBEntry?.selected_indiv_timeslot &&
-              Object.keys(times).length == 0 && (
+            {!props.userDBEntry?.selected_indiv_timeslot && isLoadingTimes && (
                 <div className="mt-8 flex items-center justify-center gap-3">
                   <div className="animate-spin">
                     <ClockIcon className="h-6 w-6 text-blue-600" />
@@ -99,6 +110,31 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
                   </p>
                 </div>
               )}
+
+            {!props.userDBEntry?.selected_indiv_timeslot &&
+              !isLoadingTimes &&
+              !loadFailed &&
+              times.length === 0 && (
+                <div className="mt-8 rounded-xl bg-amber-50 border border-amber-200 px-6 py-4">
+                  <p className="text-base font-semibold text-amber-800">
+                    No individual interview timeslots are available right now.
+                  </p>
+                  <p className="mt-1 text-sm text-amber-700">
+                    Please check back soon or contact help@ktpnu.com.
+                  </p>
+                </div>
+              )}
+
+            {!props.userDBEntry?.selected_indiv_timeslot && !isLoadingTimes && loadFailed && (
+              <div className="mt-8 rounded-xl bg-red-50 border border-red-200 px-6 py-4">
+                <p className="text-base font-semibold text-red-800">
+                  We could not load individual interview timeslots.
+                </p>
+                <p className="mt-1 text-sm text-red-700">
+                  Please refresh the page in a moment. If this continues, contact help@ktpnu.com.
+                </p>
+              </div>
+            )}
 
             {props.userDBEntry?.selected_indiv_timeslot && (
               <div className="mt-8 space-y-6">
@@ -126,7 +162,7 @@ export default function IndivInterviewContent(props:{userDBEntry:ProfileType}) {
         </div>
       </div>
 
-      {Object.keys(times).length > 0 &&
+      {times.length > 0 &&
         !props.userDBEntry?.selected_indiv_timeslot && (
           <TimeSelections 
             times={times} 

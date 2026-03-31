@@ -67,7 +67,7 @@ export default function DelibPortal(props: { user: any }) {
           }
         });
     }
-  }, [props.user]);
+  }, [database, props.user]);
 
   function setUsers(users: any) {
     var dropped: any = {};
@@ -409,7 +409,7 @@ export default function DelibPortal(props: { user: any }) {
                 <button
                   type="button"
                   onClick={() => {
-                    if (Object.keys(userGroups[1]).length != 0) {
+                    if (Object.keys(userGroups[1]).length !== 0) {
                       Swal.fire({
                         icon: "error",
                         title: "Not all applicants have been reviewed",
@@ -468,12 +468,12 @@ export default function DelibPortal(props: { user: any }) {
         <main className="pt-8 pb-16">
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="px-4 sm:px-0">
-              {currSearch == "" && (
+              {currSearch === "" && (
                 <h2 className="text-lg font-medium text-gray-900">
                   Rush Applicants
                 </h2>
               )}
-              {currSearch != "" && (
+              {currSearch !== "" && (
                 <h2 className="text-lg font-medium text-gray-900">
                   Showing {Object.keys(currGroup).length} results for "
                   {currSearch}"
@@ -619,7 +619,6 @@ export default function DelibPortal(props: { user: any }) {
 
             {/* Stacked list */}
             <ul
-              role="list"
               className="mt-5 divide-y divide-gray-200 border-t border-gray-200 sm:mt-0 sm:border-t-0"
             >
               {sortUIDsAlphabetically(currGroup).map((uid) => {

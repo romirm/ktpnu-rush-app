@@ -91,6 +91,7 @@ export default function Footer() {
             <a
               className="text-gray-900 underline"
               target="_blank"
+              rel="noreferrer"
               href="https://www.linkedin.com/in/steven-ewald/"
             >
               Steve Ewald

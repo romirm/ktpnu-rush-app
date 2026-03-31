@@ -18,6 +18,7 @@ export default function ApplicantDetails(props: {
       <div className="flex justify-center pt-2 pb-6">
         <img
           src={props.user.PfpURL}
+          alt={props.user.fullName ? `${props.user.fullName} profile` : "Applicant profile"}
           className="w-1/4 object-cover aspect-square rounded-full"
         ></img>
       </div>
@@ -117,21 +118,21 @@ export default function ApplicantDetails(props: {
             <dt className="text-sm font-medium text-gray-500">Links</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               <ul
-                role="list"
                 className="divide-y divide-gray-200 rounded-md border border-gray-200"
               >
                 <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                  <a className="flex w-0 flex-1 items-center">
+                  <div className="flex w-0 flex-1 items-center">
                     <PaperClipIcon
                       className="h-5 w-5 flex-shrink-0 text-gray-400"
                       aria-hidden="true"
                     />
                     <span className="ml-2 w-0 flex-1 truncate">Resume</span>
-                  </a>
+                  </div>
                   <div className="ml-4 flex-shrink-0">
                     <a
                       href={props.user.ResumeURL}
                       target="_blank"
+                      rel="noreferrer"
                       className="font-medium text-blue-700 hover:text-blue-600"
                     >
                       View
@@ -150,6 +151,7 @@ export default function ApplicantDetails(props: {
                     <a
                       href={"https://linkedin.com/in/" + props.user.linkedinURL}
                       target="_blank"
+                      rel="noreferrer"
                       className="font-medium text-blue-700 hover:text-blue-600"
                     >
                       View
