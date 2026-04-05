@@ -75,8 +75,12 @@ export default function DelibPortal(props: { user: any }) {
     var notDropped: any = {};
     for (const uid in users) {
       const user = users[uid];
+      // Only submitted applications should appear in deliberations.
+      if (!user.completed_application) {
+        continue;
+      }
       if (!user.fullName) {
-        console.log("Skipping user with no name\n");
+        console.log("Skipping submitted user with no name\n");
         continue;
       }
       if (user.dropped) {

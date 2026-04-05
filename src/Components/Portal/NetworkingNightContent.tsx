@@ -48,7 +48,7 @@ export default function NetworkingNightContent() {
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-1">
                   Location
                 </p>
-                <p className="text-lg font-bold text-slate-900">Tech LR2</p>
+                <p className="text-lg font-bold text-slate-900">Tech L211</p>
               </div>
               <div className="rounded-xl bg-blue-50 px-4 py-4 border border-blue-100">
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide mb-1">
