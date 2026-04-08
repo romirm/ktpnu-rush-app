@@ -47,7 +47,7 @@ export default function Application(props: {
   }, [props.user]);
 
   useEffect(() => {
-    if (new Date() > new Date(2026, 11, 31, 0) && !props.readonly) {
+    if (new Date() > new Date(2026, 4, 6, 7) && !props.readonly) {
       Swal.fire({
         icon: "error",
         title: "Applications are closed!",

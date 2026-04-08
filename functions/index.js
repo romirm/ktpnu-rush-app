@@ -27,6 +27,9 @@ const gi_signup_doc = new GoogleSpreadsheet(
 const indiv_signup_doc = new GoogleSpreadsheet(
   functions.config().gdoc_ids.indiv,
 );
+const GI_SIGNUP_START_COL = 2;
+const GI_CAPACITY_PER_ROW = 25;
+const GI_SIGNUP_END_COL = GI_SIGNUP_START_COL + GI_CAPACITY_PER_ROW - 1;
 const nodemailer = require("nodemailer");
 const { group } = require("console");
 
@@ -51,7 +54,7 @@ exports.reserveCCTime = functions.https.onCall(async (data, context) => {
     await cc_signup_doc.useServiceAccountAuth(creds);
     await cc_signup_doc.loadInfo();
     const sheet = cc_signup_doc.sheetsByIndex[0];
-    await sheet.loadCells("A6:I25");
+    await sheet.loadCells("A6:I30");
     const reserve_row = data.i;
     var reserve_col = 5;
     while (reserve_col < 8) {
@@ -83,7 +86,7 @@ exports.reserveCCTime = functions.https.onCall(async (data, context) => {
           sheet.getCell(data.i, 4).value +
           ". The timeslot is " +
           sheet.getCell(data.i, 0).value +
-          " on January 13th.",
+          " on April 7th.",
       });
       return true;
     }
@@ -101,22 +104,28 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
   await doc.useServiceAccountAuth(creds);
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
-  await sheet.loadCells("A2:Z3");
+  await sheet.loadCells("A2:AA3");
   var numTimeSignups = parseInt(sheet.getCell(data.i, 1).value, 10);
   if (isNaN(numTimeSignups) || numTimeSignups < 0) {
     numTimeSignups = 0;
   }
-  var reserveCol = numTimeSignups + 2;
+  var reserveCol = numTimeSignups + GI_SIGNUP_START_COL;
   console.log(
     "Attempting to reserve row " + data.i + " and column " + reserveCol,
   );
+  if (numTimeSignups >= GI_CAPACITY_PER_ROW) {
+    console.log("Can't reserve time! Row is full.");
+    sheet.getCell(data.i, 1).value = GI_CAPACITY_PER_ROW;
+    await sheet.saveUpdatedCells();
+    return false;
+  }
   if (sheet.getCell(data.i, reserveCol).value) {
     console.log(
       "Time already reserved by " + sheet.getCell(data.i, reserveCol).value,
     );
     reserveCol = 0;
     numTimeSignups = 0;
-    for (var j = 2; j < 25; j++) {
+    for (var j = GI_SIGNUP_START_COL; j <= GI_SIGNUP_END_COL; j++) {
       if (!sheet.getCell(data.i, j).value) {
         reserveCol = j;
         break;
@@ -126,7 +135,7 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
     }
     if (!reserveCol) {
       console.log("Can't reserve time!");
-      sheet.getCell(data.i, 1).value = 26;
+      sheet.getCell(data.i, 1).value = GI_CAPACITY_PER_ROW;
       await sheet.saveUpdatedCells();
       return false;
     }
@@ -141,13 +150,13 @@ exports.reserveGITime = functions.https.onCall(async (data, context) => {
     selected_gi_timeslot:
       "Your group interview timeslot is at Tech M345 from " +
       sheet.getCell(data.i, 0).value +
-      " on Thursday, January 15th.",
+      " on Thursday, April 9th.",
   })} else {
   rush_users.child(context.auth.uid).update({
     selected_social_timeslot:
       "Your social night timeslot is at Tech F281 from " +
       sheet.getCell(data.i, 0).value +
-      " on Wednesday, January 14th.",})
+      " on Wednesday, April 8th.",})
   }
   return true;
 });
@@ -165,9 +174,9 @@ exports.getCCTimes = functions.https.onCall(async (data, context) => {
     await cc_signup_doc.useServiceAccountAuth(creds);
     await cc_signup_doc.loadInfo();
     const sheet = cc_signup_doc.sheetsByIndex[0];
-    await sheet.loadCells("A6:H25");
+    await sheet.loadCells("A6:H30");
 
-    for (var i = 5; i < 25; i += 1) {
+    for (var i = 5; i < 30; i += 1) {
       const timeValue = sheet.getCell(i, 0).value;
       const locationValue = sheet.getCell(i, 4).value;
 
@@ -190,7 +199,7 @@ exports.getCCTimes = functions.https.onCall(async (data, context) => {
       times.push({
         time: timeValue,
         location: locationValue,
-        date: "January 13th",
+        date: "April 7th",
         i: i,
         j: 0,
       });
@@ -312,7 +321,7 @@ exports.getGITimes = functions.https.onCall(async (data, context) => {
     const normalizedSignupCount = isNaN(signupCount) || signupCount < 0 ? 0 : signupCount;
     if (
       sheet.getCell(i, 0).value &&
-      normalizedSignupCount < 26
+      normalizedSignupCount < GI_CAPACITY_PER_ROW
     ) {
       times.push({
         time: sheet.getCell(i, 0).value,
